@@ -1,0 +1,180 @@
+/* Custom styles for the fitness tracker */
+.sidebar {
+    background: linear-gradient(135deg, #1e3a8a 0%, #3730a3 100%);
+}
+
+.logo-icon {
+    position: relative;
+    display: inline-block;
+}
+
+.nav-item {
+    @apply flex items-center px-4 py-3 text-gray-700 rounded-lg hover:bg-gray-100 transition-colors duration-200;
+}
+
+.nav-item.active {
+    @apply bg-blue-100 text-blue-700 font-medium;
+}
+
+.workout-day {
+    @apply border border-gray-200 hover:border-blue-300 hover:shadow-md;
+}
+
+.view {
+    @apply block;
+}
+
+.view.hidden {
+    @apply hidden;
+}
+
+/* Exercise card styles */
+.exercise-card {
+    @apply bg-white rounded-lg shadow-lg p-6 border border-gray-200 hover:shadow-xl transition-shadow duration-200;
+}
+
+.exercise-card.completed {
+    @apply bg-green-50 border-green-200;
+}
+
+.set-input {
+    @apply w-16 px-2 py-1 text-center border border-gray-300 rounded bg-white text-gray-900 focus:border-blue-500 focus:ring-1 focus:ring-blue-500;
+}
+
+.set-checkbox {
+    @apply h-5 w-5 text-blue-600 rounded border-gray-300 focus:ring-blue-500;
+}
+
+/* Timer styles */
+.timer-circle {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background: conic-gradient(#3b82f6 0deg, #e5e7eb 0deg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+}
+
+.timer-inner {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    background: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .sidebar {
+        transform: translateX(-100%);
+        transition: transform 0.3s ease-in-out;
+    }
+    
+    .sidebar.open {
+        transform: translateX(0);
+    }
+}
+
+/* Animation for progress bars */
+.progress-animation {
+    transition: width 0.5s ease-in-out;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
+}
+
+/* Video placeholder styles */
+.video-placeholder {
+    @apply bg-gray-100 border-2 border-dashed border-gray-300 rounded-lg p-4 text-center transition-all duration-200;
+}
+
+.video-placeholder:hover {
+    @apply border-blue-400 bg-blue-50 transform scale-105;
+}
+
+.video-button {
+    @apply bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded-lg text-sm transition-colors duration-200;
+}
+
+.video-input {
+    @apply w-full px-3 py-2 border border-gray-300 rounded-lg focus:border-blue-500 focus:ring-1 focus:ring-blue-500 text-sm;
+}
+
+.exercise-header {
+    @apply flex items-start justify-between mb-4 pb-4 border-b border-gray-200;
+}
+
+.exercise-video-section {
+    @apply flex flex-col space-y-2;
+}
+
+.video-modal {
+    @apply fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50;
+}
+
+.video-modal-content {
+    @apply bg-white rounded-lg p-6 max-w-md w-full mx-4;
+}
+
+.workout-summary-modal {
+    @apply fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50;
+}
+
+.workout-summary-content {
+    @apply bg-white rounded-lg p-8 max-w-lg w-full mx-4;
+}
+
+.summary-stat {
+    @apply flex items-center justify-between py-2 border-b border-gray-200;
+}
+
+.weight-modal {
+    @apply fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50;
+}
+
+.weight-modal-content {
+    @apply bg-white rounded-lg p-6 max-w-sm w-full mx-4;
+}
+
+/* Workout completion celebration */
+.celebration {
+    animation: bounce 0.5s ease-in-out;
+}
+
+@keyframes bounce {
+    0%, 20%, 53%, 80%, 100% {
+        transform: translate3d(0,0,0);
+    }
+    40%, 43% {
+        transform: translate3d(0, -10px, 0);
+    }
+    70% {
+        transform: translate3d(0, -5px, 0);
+    }
+    90% {
+        transform: translate3d(0, -2px, 0);
+    }
+}
