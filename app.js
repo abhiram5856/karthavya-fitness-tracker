@@ -683,63 +683,102 @@ class FitnessTracker {
     }
 
     editWeight() {
-        console.log('editWeight called');
-        // Close any existing modal first
-        this.closeWeightModal();
+        console.log('editWeight called - starting weight edit process');
+        
+        // Force close any existing modal
+        const existingModal = document.querySelector('.weight-modal');
+        if (existingModal) {
+            console.log('Removing existing modal');
+            existingModal.remove();
+        }
         
         const currentWeight = this.getCurrentWeight();
-        console.log('Current weight:', currentWeight);
+        console.log('Current weight retrieved:', currentWeight);
+        
+        // Create modal with explicit styling
         const modal = document.createElement('div');
         modal.className = 'weight-modal';
+        modal.style.cssText = `
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        `;
+        
         modal.innerHTML = `
-            <div class="weight-modal-content">
-                <h3 class="text-lg font-semibold text-gray-800 mb-4">Update Your Weight</h3>
-                <div class="mb-4">
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Current Weight (kg)</label>
+            <div class="weight-modal-content" style="
+                background: white;
+                padding: 2rem;
+                border-radius: 0.5rem;
+                box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+                max-width: 400px;
+                width: 90%;
+            ">
+                <h3 style="font-size: 1.125rem; font-weight: 600; color: #1f2937; margin-bottom: 1rem;">Update Your Weight</h3>
+                <div style="margin-bottom: 1rem;">
+                    <label style="display: block; font-size: 0.875rem; font-weight: 500; color: #374151; margin-bottom: 0.5rem;">Current Weight (kg)</label>
                     <input type="number" 
                            value="${currentWeight}" 
                            placeholder="Enter weight in kg"
                            step="0.1"
                            min="30"
                            max="300"
-                           class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" 
+                           style="width: 100%; padding: 0.75rem; border: 1px solid #d1d5db; border-radius: 0.5rem; outline: none;"
                            id="weight-input">
                 </div>
-                <div class="flex justify-end space-x-3">
+                <div style="display: flex; justify-content: flex-end; gap: 0.75rem;">
                     <button onclick="window.fitnessTracker.closeWeightModal()" 
-                            class="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400">
+                            style="padding: 0.5rem 1rem; background: #d1d5db; color: #374151; border: none; border-radius: 0.5rem; cursor: pointer;">
                         Cancel
                     </button>
                     <button onclick="window.fitnessTracker.saveWeight()" 
-                            class="px-4 py-2 bg-blue-900 text-white rounded-lg hover:bg-blue-800">
+                            style="padding: 0.5rem 1rem; background: #1e3a8a; color: white; border: none; border-radius: 0.5rem; cursor: pointer;">
                         Save
                     </button>
                 </div>
             </div>
         `;
+        
+        console.log('Appending modal to body');
         document.body.appendChild(modal);
         
         // Add click outside to close
         modal.addEventListener('click', (e) => {
             if (e.target === modal) {
+                console.log('Clicked outside modal, closing');
                 this.closeWeightModal();
             }
         });
         
-        // Focus on input with a small delay
+        // Focus input
         setTimeout(() => {
             const input = document.getElementById('weight-input');
             if (input) {
+                console.log('Focusing weight input');
                 input.focus();
                 input.select();
+            } else {
+                console.error('Weight input not found after modal creation');
             }
         }, 100);
+        
+        console.log('Weight modal created and displayed');
     }
     
     closeWeightModal() {
+        console.log('Closing weight modal');
         const modal = document.querySelector('.weight-modal');
         if (modal) {
+            console.log('Modal found, removing');
             modal.remove();
+        } else {
+            console.log('No modal found to close');
         }
     }
     
