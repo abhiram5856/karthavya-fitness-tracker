@@ -25,6 +25,7 @@
             </div>
         </div>
     </div>
+
     <!-- Mobile Navigation -->
     <nav class="bg-white shadow-lg sticky top-0 z-40">
         <div class="px-4 py-3">
@@ -68,17 +69,125 @@
             <div class="p-6">
                 <h2 class="text-xl font-bold text-gray-800 mb-6 text-center">6-Day Workout Schedule</h2>
                 <nav class="space-y-3" id="desktop-nav"></nav>
-        </div>
+            </div>
         </aside>
 
         <!-- Main Content -->
         <main class="md:ml-72 p-2 sm:p-4">
-            <!-- Content will be loaded here dynamically -->
-            <div id="main-content"></div>
+            <!-- Dashboard View -->
+            <div id="dashboard-view" class="view">
+                <div class="mb-6">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-2">KARTHAVYA Dashboard</h2>
+                    <p class="text-gray-600">Track your fitness journey and progress</p>
+                </div>
+
+                <!-- Stats Cards -->
+                <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+                    <div class="bg-white rounded-lg shadow p-4">
+                        <div class="flex items-center">
+                            <div class="p-2 rounded-full bg-blue-100">
+                                <i class="fas fa-calendar-check text-blue-900 text-sm"></i>
+                            </div>
+                            <div class="ml-3">
+                                <p class="text-xs font-medium text-gray-600">This Week</p>
+                                <p class="text-lg font-semibold text-gray-900" id="weekly-workouts">0/6</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white rounded-lg shadow p-4">
+                        <div class="flex items-center">
+                            <div class="p-2 rounded-full bg-orange-100">
+                                <i class="fas fa-fire text-orange-500 text-sm"></i>
+                            </div>
+                            <div class="ml-3">
+                                <p class="text-xs font-medium text-gray-600">Calories</p>
+                                <p class="text-lg font-semibold text-gray-900" id="total-calories">0</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white rounded-lg shadow p-4">
+                        <div class="flex items-center">
+                            <div class="p-2 rounded-full bg-green-100">
+                                <i class="fas fa-trophy text-green-600 text-sm"></i>
+                            </div>
+                            <div class="ml-3">
+                                <p class="text-xs font-medium text-gray-600">Streak</p>
+                                <p class="text-lg font-semibold text-gray-900" id="current-streak">0</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white rounded-lg shadow p-4">
+                        <div class="flex items-center">
+                            <div class="p-2 rounded-full bg-purple-100">
+                                <i class="fas fa-weight text-purple-600 text-sm"></i>
+                            </div>
+                            <div class="ml-3">
+                                <p class="text-xs font-medium text-gray-600">Weight</p>
+                                <p class="text-lg font-semibold text-gray-900" id="dashboard-weight">--kg</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Today's Workout -->
+                <div class="bg-white rounded-lg shadow p-6 mb-8">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4">Today's Workout</h3>
+                    <div id="today-workout">
+                        <!-- Content loaded by JavaScript -->
+                    </div>
+                </div>
+
+                <!-- Progress Chart -->
+                <div class="bg-white rounded-lg shadow p-6">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4">Weekly Progress</h3>
+                    <canvas id="progressChart" width="400" height="200"></canvas>
+                </div>
+            </div>
+
+            <!-- Workout Views (Day 1-6) -->
+            <div id="day1-view" class="view hidden">
+                <div id="day1-content"></div>
+            </div>
+            <div id="day2-view" class="view hidden">
+                <div id="day2-content"></div>
+            </div>
+            <div id="day3-view" class="view hidden">
+                <div id="day3-content"></div>
+            </div>
+            <div id="day4-view" class="view hidden">
+                <div id="day4-content"></div>
+            </div>
+            <div id="day5-view" class="view hidden">
+                <div id="day5-content"></div>
+            </div>
+            <div id="day6-view" class="view hidden">
+                <div id="day6-content"></div>
+            </div>
+
+            <!-- Rest Day View -->
+            <div id="rest-view" class="view hidden">
+                <div class="text-center py-12">
+                    <i class="fas fa-bed text-6xl text-gray-400 mb-4"></i>
+                    <h2 class="text-2xl font-bold text-gray-800 mb-2">Rest Day</h2>
+                    <p class="text-gray-600 mb-6">Take time to recover and prepare for tomorrow's workout</p>
+                    <div class="bg-white rounded-lg shadow p-6 max-w-md mx-auto">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-4">Recovery Tips</h3>
+                        <ul class="text-left text-gray-600 space-y-2">
+                            <li><i class="fas fa-check text-green-500 mr-2"></i>Get 7-9 hours of sleep</li>
+                            <li><i class="fas fa-check text-green-500 mr-2"></i>Stay hydrated</li>
+                            <li><i class="fas fa-check text-green-500 mr-2"></i>Light stretching or yoga</li>
+                            <li><i class="fas fa-check text-green-500 mr-2"></i>Proper nutrition</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
         </main>
     </div>
 
-    <!-- Navigation Items Template (will be duplicated to both mobile and desktop) -->
+    <!-- Navigation Items Template -->
     <template id="nav-template">
         <a href="#" class="nav-item active" data-day="dashboard">
             <div class="flex items-center justify-between p-3 rounded-lg hover:bg-gray-50">
@@ -193,180 +302,24 @@
                     </div>
                 </div>
             </a>
-                        <a href="#" class="nav-item" data-day="rest">
-                            <div class="flex items-center justify-between">
-                                <div class="flex items-center">
-                                    <div class="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center mr-3">
-                                        <i class="fas fa-bed text-gray-600 text-sm"></i>
-                                    </div>
-                                    <div>
-                                        <div class="font-medium text-gray-800">Day 7: Rest</div>
-                                        <div class="text-xs text-gray-500">Recovery day</div>
-                                    </div>
-                                </div>
-                                <i class="fas fa-chevron-right text-gray-400"></i>
-                            </div>
-                        </a>
-                    </div>
-                </nav>
-            </div>
-        </aside>
-
-        <!-- Main Content -->
-        <main class="flex-1 p-6">
-            <!-- Dashboard View -->
-            <div id="dashboard-view" class="view">
-                <div class="mb-6">
-                    <h2 class="text-2xl font-bold text-gray-800 mb-2">KARTHAVYA Dashboard</h2>
-                    <p class="text-gray-600">Track your fitness journey and progress</p>
-                </div>
-
-                <!-- Stats Cards -->
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-                    <div class="bg-white rounded-lg shadow p-6">
-                        <div class="flex items-center">
-                            <div class="p-3 rounded-full bg-blue-100">
-                                <i class="fas fa-calendar-check text-blue-900"></i>
-                            </div>
-                            <div class="ml-4">
-                                <p class="text-sm font-medium text-gray-600">This Week</p>
-                                <p class="text-2xl font-semibold text-gray-900" id="weekly-workouts">0/6</p>
-                            </div>
+            <a href="#" class="nav-item" data-day="rest">
+                <div class="flex items-center justify-between p-3 rounded-lg hover:bg-gray-50">
+                    <div class="flex items-center">
+                        <div class="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center mr-3">
+                            <i class="fas fa-bed text-gray-600 text-sm"></i>
+                        </div>
+                        <div>
+                            <div class="font-medium text-gray-800 text-sm">Day 7: Rest</div>
+                            <div class="text-xs text-gray-500">Recovery day</div>
                         </div>
                     </div>
-                    
-                    <div class="bg-white rounded-lg shadow p-6">
-                        <div class="flex items-center">
-                            <div class="p-3 rounded-full bg-orange-100">
-                                <i class="fas fa-fire text-orange-500"></i>
-                            </div>
-                            <div class="ml-4">
-                                <p class="text-sm font-medium text-gray-600">Calories Burned</p>
-                                <p class="text-2xl font-semibold text-gray-900" id="total-calories">0</p>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="bg-white rounded-lg shadow p-6">
-                        <div class="flex items-center">
-                            <div class="p-3 rounded-full bg-blue-100">
-                                <i class="fas fa-weight text-blue-900"></i>
-                            </div>
-                            <div class="ml-4">
-                                <p class="text-sm font-medium text-gray-600">Current Weight</p>
-                                <p class="text-2xl font-semibold text-gray-900"><span id="dashboard-weight">105</span> kg</p>
-                                <p class="text-xs text-gray-500" id="weight-change">No change</p>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="bg-white rounded-lg shadow p-6">
-                        <div class="flex items-center">
-                            <div class="p-3 rounded-full bg-orange-100">
-                                <i class="fas fa-trophy text-orange-500"></i>
-                            </div>
-                            <div class="ml-4">
-                                <p class="text-sm font-medium text-gray-600">Streak</p>
-                                <p class="text-2xl font-semibold text-gray-900" id="current-streak">0 days</p>
-                            </div>
-                        </div>
-                    </div>
+                    <i class="fas fa-chevron-right text-gray-400"></i>
                 </div>
-
-                <!-- Progress Charts -->
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-                    <div class="bg-white rounded-lg shadow p-6">
-                        <h3 class="text-lg font-semibold text-gray-800 mb-4">Weekly Progress</h3>
-                        <canvas id="weekly-chart" width="400" height="200"></canvas>
-                    </div>
-                    
-                    <div class="bg-white rounded-lg shadow p-6">
-                        <h3 class="text-lg font-semibold text-gray-800 mb-4">Monthly Overview</h3>
-                        <canvas id="monthly-chart" width="400" height="200"></canvas>
-                    </div>
-                    
-                    <div class="bg-white rounded-lg shadow p-6">
-                        <h3 class="text-lg font-semibold text-gray-800 mb-4">Weight Progress</h3>
-                        <canvas id="weight-chart" width="400" height="200"></canvas>
-                    </div>
-                </div>
-
-                <!-- Today's Workout -->
-                <div class="bg-white rounded-lg shadow p-6">
-                    <h3 class="text-lg font-semibold text-gray-800 mb-4">Today's Workout</h3>
-                    <div id="today-workout" class="text-gray-600">
-                        <!-- Will be populated by JavaScript -->
-                    </div>
-                </div>
-            </div>
-
-            <!-- Workout Views -->
-            <div id="workout-view" class="view hidden">
-                <div class="mb-6">
-                    <h2 id="workout-title" class="text-2xl font-bold text-gray-800 mb-2"></h2>
-                    <div class="flex items-center space-x-4">
-                        <div class="flex-1 bg-gray-200 rounded-full h-2">
-                            <div id="workout-progress" class="bg-blue-900 h-2 rounded-full transition-all duration-300" style="width: 0%"></div>
-                        </div>
-                        <span id="progress-text" class="text-sm text-gray-600">0% Complete</span>
-                    </div>
-                </div>
-
-                <!-- Timer -->
-                <div id="timer-section" class="bg-white rounded-lg shadow p-6 mb-6 hidden">
-                    <div class="text-center">
-                        <h3 class="text-lg font-semibold text-gray-800 mb-4">Rest Timer</h3>
-                        <div class="text-4xl font-bold text-blue-900 mb-4" id="timer-display">01:30</div>
-                        <div class="flex justify-center space-x-4">
-                            <button id="timer-start" class="px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600">
-                                <i class="fas fa-play mr-2"></i>Start
-                            </button>
-                            <button id="timer-pause" class="px-4 py-2 bg-blue-900 text-white rounded-lg hover:bg-blue-800">
-                                <i class="fas fa-pause mr-2"></i>Pause
-                            </button>
-                            <button id="timer-reset" class="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700">
-                                <i class="fas fa-stop mr-2"></i>Reset
-                            </button>
-                        </div>
-                        <div class="mt-4">
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Rest Duration</label>
-                            <input type="range" id="timer-duration" min="30" max="180" value="90" class="w-full">
-                            <div class="flex justify-between text-xs text-gray-500">
-                                <span>30s</span>
-                                <span>3min</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Exercises -->
-                <div id="exercises-container" class="space-y-4">
-                    <!-- Will be populated by JavaScript -->
-                </div>
-            </div>
-
-            <!-- Rest Day View -->
-            <div id="rest-view" class="view hidden">
-                <div class="text-center py-12">
-                    <i class="fas fa-bed text-6xl text-gray-400 dark:text-gray-600 mb-4"></i>
-                    <h2 class="text-2xl font-bold text-gray-800 mb-2">Rest Day</h2>
-                    <p class="text-gray-600 mb-6">Take time to recover and prepare for tomorrow's workout</p>
-                    <div class="bg-white rounded-lg shadow p-6 max-w-md mx-auto">
-                        <h3 class="text-lg font-semibold text-gray-800 mb-4">Recovery Tips</h3>
-                        <ul class="text-left text-gray-600 space-y-2">
-                            <li><i class="fas fa-check text-green-500 mr-2"></i>Get 7-9 hours of sleep</li>
-                            <li><i class="fas fa-check text-green-500 mr-2"></i>Stay hydrated</li>
-                            <li><i class="fas fa-check text-green-500 mr-2"></i>Light stretching or yoga</li>
-                            <li><i class="fas fa-check text-green-500 mr-2"></i>Proper nutrition</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </main>
-    </div>
+            </a>
+        </div>
+    </template>
 
     <script src="workout-data.js"></script>
     <script src="app.js"></script>
 </body>
 </html>
-
