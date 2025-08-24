@@ -25,151 +25,174 @@
             </div>
         </div>
     </div>
-    <!-- Navigation -->
-    <nav class="bg-white shadow-lg">
-        <div class="max-w-7xl mx-auto px-4">
-            <div class="flex justify-between items-center py-4">
+    <!-- Mobile Navigation -->
+    <nav class="bg-white shadow-lg sticky top-0 z-40">
+        <div class="px-4 py-3">
+            <div class="flex justify-between items-center">
                 <div class="flex items-center">
-                    <div class="relative mr-3">
-                        <i class="fas fa-dumbbell text-2xl text-blue-900"></i>
-                        <i class="fas fa-check text-sm text-orange-500 absolute -top-1 -right-1 bg-white rounded-full p-1"></i>
+                    <div class="relative mr-2">
+                        <i class="fas fa-dumbbell text-xl text-blue-900"></i>
+                        <i class="fas fa-check text-xs text-orange-500 absolute -top-1 -right-1 bg-white rounded-full p-1"></i>
                     </div>
                     <div>
-                        <h1 class="text-xl font-bold text-blue-900">KARTHAVYA</h1>
+                        <h1 class="text-lg font-bold text-blue-900">KARTHAVYA</h1>
                         <p class="text-xs text-orange-600 -mt-1">by Abhiram</p>
                     </div>
                 </div>
-                <div class="flex items-center space-x-4">
-                    <div class="text-sm text-gray-600">
-                        <i class="fas fa-user mr-2"></i><span id="current-weight-display">105</span>kg | 5'10" | Body Recomposition
+                <div class="flex items-center space-x-2">
+                    <div class="text-xs text-gray-600">
+                        <span id="current-weight-display">--</span>kg
                     </div>
-                    <button onclick="window.fitnessTracker.editWeight()" class="px-3 py-1 bg-blue-900 text-white text-sm rounded-lg hover:bg-blue-800">
-                        <i class="fas fa-edit mr-1"></i>Update Weight
+                    <button onclick="window.fitnessTracker.toggleMobileMenu()" class="p-2 text-blue-900 md:hidden">
+                        <i class="fas fa-bars text-lg"></i>
                     </button>
                 </div>
             </div>
         </div>
     </nav>
 
-    <div class="flex min-h-screen">
-        <!-- Sidebar -->
-        <aside class="w-72 bg-white shadow-lg border-r border-gray-200">
+    <!-- Mobile Menu Overlay -->
+    <div id="mobile-menu-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-30 hidden md:hidden"></div>
+    
+    <!-- Mobile Sidebar -->
+    <aside id="mobile-sidebar" class="fixed left-0 top-16 h-full w-80 bg-white shadow-lg transform -translate-x-full transition-transform duration-300 z-40 md:hidden">
+        <div class="p-4">
+            <h2 class="text-lg font-bold text-gray-800 mb-4 text-center">6-Day Workout Schedule</h2>
+            <nav class="space-y-2" id="mobile-nav"></nav>
+        </div>
+    </aside>
+
+    <div class="min-h-screen">
+        <!-- Desktop Sidebar (hidden on mobile) -->
+        <aside class="hidden md:block fixed left-0 top-16 h-full w-72 bg-white shadow-lg border-r border-gray-200 z-30">
             <div class="p-6">
                 <h2 class="text-xl font-bold text-gray-800 mb-6 text-center">6-Day Workout Schedule</h2>
-                <nav class="space-y-3">
-                    <a href="#" class="nav-item active" data-day="dashboard">
-                        <div class="flex items-center justify-between">
-                            <div class="flex items-center">
-                                <i class="fas fa-chart-line mr-3 text-blue-900"></i>
-                                <span class="font-medium">Dashboard</span>
-                            </div>
-                            <i class="fas fa-chevron-right text-gray-400"></i>
+                <nav class="space-y-3" id="desktop-nav"></nav>
+        </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="md:ml-72 p-2 sm:p-4">
+            <!-- Content will be loaded here dynamically -->
+            <div id="main-content"></div>
+        </main>
+    </div>
+
+    <!-- Navigation Items Template (will be duplicated to both mobile and desktop) -->
+    <template id="nav-template">
+        <a href="#" class="nav-item active" data-day="dashboard">
+            <div class="flex items-center justify-between p-3 rounded-lg hover:bg-gray-50">
+                <div class="flex items-center">
+                    <i class="fas fa-chart-line mr-3 text-blue-900"></i>
+                    <span class="font-medium">Dashboard</span>
+                </div>
+                <i class="fas fa-chevron-right text-gray-400"></i>
+            </div>
+        </a>
+        <div class="border-t border-gray-200 pt-3 mt-3">
+            <p class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">Weekly Schedule</p>
+            <a href="#" class="nav-item workout-day" data-day="day1">
+                <div class="flex items-center justify-between p-3 rounded-lg hover:bg-gray-50">
+                    <div class="flex items-center">
+                        <div class="w-8 h-8 bg-orange-100 rounded-full flex items-center justify-center mr-3">
+                            <i class="fas fa-heart text-orange-500 text-sm"></i>
                         </div>
-                    </a>
-                    <div class="border-t border-gray-200 pt-3">
-                        <p class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">Weekly Schedule</p>
-                        <a href="#" class="nav-item workout-day" data-day="day1">
-                            <div class="flex items-center justify-between">
-                                <div class="flex items-center">
-                                    <div class="w-8 h-8 bg-orange-100 rounded-full flex items-center justify-center mr-3">
-                                        <i class="fas fa-heart text-orange-500 text-sm"></i>
-                                    </div>
-                                    <div>
-                                        <div class="font-medium text-gray-800">Day 1: Chest + Cardio</div>
-                                        <div class="text-xs text-gray-500">6 exercises • ~60 min</div>
-                                    </div>
-                                </div>
-                                <div class="flex items-center">
-                                    <div class="w-2 h-2 bg-green-500 rounded-full mr-2" title="Completed"></div>
-                                    <i class="fas fa-chevron-right text-gray-400"></i>
-                                </div>
-                            </div>
-                        </a>
-                        <a href="#" class="nav-item workout-day" data-day="day2">
-                            <div class="flex items-center justify-between">
-                                <div class="flex items-center">
-                                    <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center mr-3">
-                                        <i class="fas fa-user text-blue-900 text-sm"></i>
-                                    </div>
-                                    <div>
-                                        <div class="font-medium text-gray-800">Day 2: Shoulders + Abs</div>
-                                        <div class="text-xs text-gray-500">7 exercises • ~60 min</div>
-                                    </div>
-                                </div>
-                                <div class="flex items-center">
-                                    <div class="w-2 h-2 bg-gray-300 rounded-full mr-2" title="Not completed"></div>
-                                    <i class="fas fa-chevron-right text-gray-400"></i>
-                                </div>
-                            </div>
-                        </a>
-                        <a href="#" class="nav-item workout-day" data-day="day3">
-                            <div class="flex items-center justify-between">
-                                <div class="flex items-center">
-                                    <div class="w-8 h-8 bg-orange-100 rounded-full flex items-center justify-center mr-3">
-                                        <i class="fas fa-shield-alt text-orange-500 text-sm"></i>
-                                    </div>
-                                    <div>
-                                        <div class="font-medium text-gray-800">Day 3: Back + Cardio</div>
-                                        <div class="text-xs text-gray-500">6 exercises • ~60 min</div>
-                                    </div>
-                                </div>
-                                <div class="flex items-center">
-                                    <div class="w-2 h-2 bg-gray-300 rounded-full mr-2" title="Not completed"></div>
-                                    <i class="fas fa-chevron-right text-gray-400"></i>
-                                </div>
-                            </div>
-                        </a>
-                        <a href="#" class="nav-item workout-day" data-day="day4">
-                            <div class="flex items-center justify-between">
-                                <div class="flex items-center">
-                                    <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center mr-3">
-                                        <i class="fas fa-fist-raised text-blue-900 text-sm"></i>
-                                    </div>
-                                    <div>
-                                        <div class="font-medium text-gray-800">Day 4: Arms + Abs</div>
-                                        <div class="text-xs text-gray-500">7 exercises • ~60 min</div>
-                                    </div>
-                                </div>
-                                <div class="flex items-center">
-                                    <div class="w-2 h-2 bg-gray-300 rounded-full mr-2" title="Not completed"></div>
-                                    <i class="fas fa-chevron-right text-gray-400"></i>
-                                </div>
-                            </div>
-                        </a>
-                        <a href="#" class="nav-item workout-day" data-day="day5">
-                            <div class="flex items-center justify-between">
-                                <div class="flex items-center">
-                                    <div class="w-8 h-8 bg-orange-100 rounded-full flex items-center justify-center mr-3">
-                                        <i class="fas fa-running text-orange-500 text-sm"></i>
-                                    </div>
-                                    <div>
-                                        <div class="font-medium text-gray-800">Day 5: Legs + Cardio</div>
-                                        <div class="text-xs text-gray-500">6 exercises • ~60 min</div>
-                                    </div>
-                                </div>
-                                <div class="flex items-center">
-                                    <div class="w-2 h-2 bg-gray-300 rounded-full mr-2" title="Not completed"></div>
-                                    <i class="fas fa-chevron-right text-gray-400"></i>
-                                </div>
-                            </div>
-                        </a>
-                        <a href="#" class="nav-item workout-day" data-day="day6">
-                            <div class="flex items-center justify-between">
-                                <div class="flex items-center">
-                                    <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center mr-3">
-                                        <i class="fas fa-fire text-blue-900 text-sm"></i>
-                                    </div>
-                                    <div>
-                                        <div class="font-medium text-gray-800">Day 6: Full Body + Abs</div>
-                                        <div class="text-xs text-gray-500">7 exercises • ~60 min</div>
-                                    </div>
-                                </div>
-                                <div class="flex items-center">
-                                    <div class="w-2 h-2 bg-gray-300 rounded-full mr-2" title="Not completed"></div>
-                                    <i class="fas fa-chevron-right text-gray-400"></i>
-                                </div>
-                            </div>
-                        </a>
+                        <div>
+                            <div class="font-medium text-gray-800 text-sm">Day 1: Chest + Cardio</div>
+                            <div class="text-xs text-gray-500">6 exercises • ~60 min</div>
+                        </div>
+                    </div>
+                    <div class="flex items-center">
+                        <div class="w-2 h-2 bg-green-500 rounded-full mr-2" title="Completed"></div>
+                        <i class="fas fa-chevron-right text-gray-400"></i>
+                    </div>
+                </div>
+            </a>
+            <a href="#" class="nav-item workout-day" data-day="day2">
+                <div class="flex items-center justify-between p-3 rounded-lg hover:bg-gray-50">
+                    <div class="flex items-center">
+                        <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center mr-3">
+                            <i class="fas fa-user text-blue-900 text-sm"></i>
+                        </div>
+                        <div>
+                            <div class="font-medium text-gray-800 text-sm">Day 2: Shoulders + Abs</div>
+                            <div class="text-xs text-gray-500">7 exercises • ~60 min</div>
+                        </div>
+                    </div>
+                    <div class="flex items-center">
+                        <div class="w-2 h-2 bg-gray-300 rounded-full mr-2" title="Not completed"></div>
+                        <i class="fas fa-chevron-right text-gray-400"></i>
+                    </div>
+                </div>
+            </a>
+            <a href="#" class="nav-item workout-day" data-day="day3">
+                <div class="flex items-center justify-between p-3 rounded-lg hover:bg-gray-50">
+                    <div class="flex items-center">
+                        <div class="w-8 h-8 bg-orange-100 rounded-full flex items-center justify-center mr-3">
+                            <i class="fas fa-shield-alt text-orange-500 text-sm"></i>
+                        </div>
+                        <div>
+                            <div class="font-medium text-gray-800 text-sm">Day 3: Back + Cardio</div>
+                            <div class="text-xs text-gray-500">6 exercises • ~60 min</div>
+                        </div>
+                    </div>
+                    <div class="flex items-center">
+                        <div class="w-2 h-2 bg-gray-300 rounded-full mr-2" title="Not completed"></div>
+                        <i class="fas fa-chevron-right text-gray-400"></i>
+                    </div>
+                </div>
+            </a>
+            <a href="#" class="nav-item workout-day" data-day="day4">
+                <div class="flex items-center justify-between p-3 rounded-lg hover:bg-gray-50">
+                    <div class="flex items-center">
+                        <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center mr-3">
+                            <i class="fas fa-fist-raised text-blue-900 text-sm"></i>
+                        </div>
+                        <div>
+                            <div class="font-medium text-gray-800 text-sm">Day 4: Arms + Abs</div>
+                            <div class="text-xs text-gray-500">7 exercises • ~60 min</div>
+                        </div>
+                    </div>
+                    <div class="flex items-center">
+                        <div class="w-2 h-2 bg-gray-300 rounded-full mr-2" title="Not completed"></div>
+                        <i class="fas fa-chevron-right text-gray-400"></i>
+                    </div>
+                </div>
+            </a>
+            <a href="#" class="nav-item workout-day" data-day="day5">
+                <div class="flex items-center justify-between p-3 rounded-lg hover:bg-gray-50">
+                    <div class="flex items-center">
+                        <div class="w-8 h-8 bg-orange-100 rounded-full flex items-center justify-center mr-3">
+                            <i class="fas fa-running text-orange-500 text-sm"></i>
+                        </div>
+                        <div>
+                            <div class="font-medium text-gray-800 text-sm">Day 5: Legs + Cardio</div>
+                            <div class="text-xs text-gray-500">6 exercises • ~60 min</div>
+                        </div>
+                    </div>
+                    <div class="flex items-center">
+                        <div class="w-2 h-2 bg-gray-300 rounded-full mr-2" title="Not completed"></div>
+                        <i class="fas fa-chevron-right text-gray-400"></i>
+                    </div>
+                </div>
+            </a>
+            <a href="#" class="nav-item workout-day" data-day="day6">
+                <div class="flex items-center justify-between p-3 rounded-lg hover:bg-gray-50">
+                    <div class="flex items-center">
+                        <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center mr-3">
+                            <i class="fas fa-fire text-blue-900 text-sm"></i>
+                        </div>
+                        <div>
+                            <div class="font-medium text-gray-800 text-sm">Day 6: Full Body + Abs</div>
+                            <div class="text-xs text-gray-500">7 exercises • ~60 min</div>
+                        </div>
+                    </div>
+                    <div class="flex items-center">
+                        <div class="w-2 h-2 bg-gray-300 rounded-full mr-2" title="Not completed"></div>
+                        <i class="fas fa-chevron-right text-gray-400"></i>
+                    </div>
+                </div>
+            </a>
                         <a href="#" class="nav-item" data-day="rest">
                             <div class="flex items-center justify-between">
                                 <div class="flex items-center">
@@ -231,8 +254,8 @@
                             </div>
                             <div class="ml-4">
                                 <p class="text-sm font-medium text-gray-600">Current Weight</p>
-                                <p class="text-2xl font-semibold text-gray-900"><span id="dashboard-weight">99.3</span> kg</p>
-                                <p class="text-xs text-gray-500" id="weight-change">-6 Keep going!~</p>
+                                <p class="text-2xl font-semibold text-gray-900"><span id="dashboard-weight">105</span> kg</p>
+                                <p class="text-xs text-gray-500" id="weight-change">No change</p>
                             </div>
                         </div>
                     </div>
@@ -346,3 +369,4 @@
     <script src="app.js"></script>
 </body>
 </html>
+
