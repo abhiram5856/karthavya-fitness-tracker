@@ -17,6 +17,7 @@ class FitnessTracker {
         this.loadDashboard();
         this.initializeProgress();
         this.checkWeightOnLoad();
+        this.populateNavigation();
     }
 
     setupEventListeners() {
@@ -683,83 +684,51 @@ class FitnessTracker {
         this.showCelebration();
     }
 
-    checkWeightOnLoad() {
-        // Wait for splash screen to finish
-        setTimeout(() => {
-            this.showWeightInputModal();
-        }, 3500);
-    }
-
-    showWeightInputModal() {
-        console.log('Showing weight input modal on load');
+    editWeight() {
+        console.log('editWeight called');
+        // Close any existing modal first
+        this.closeWeightModal();
         
         const currentWeight = this.getCurrentWeight();
-        const previousWeight = localStorage.getItem('previousWeight') || currentWeight;
-        
-        // Create modal with explicit styling
+        console.log('Current weight:', currentWeight);
         const modal = document.createElement('div');
         modal.className = 'weight-modal';
-        modal.style.cssText = `
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.7);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 9999;
-        `;
-        
-        const weightComparison = currentWeight !== previousWeight ? 
-            `<p style="font-size: 0.875rem; color: #6b7280; margin-bottom: 1rem;">
-                Previous: ${previousWeight}kg → Current: ${currentWeight}kg
-                <span style="color: ${currentWeight > previousWeight ? '#ef4444' : '#10b981'};">
-                    (${currentWeight > previousWeight ? '+' : ''}${(currentWeight - previousWeight).toFixed(1)}kg)
-                </span>
-            </p>` : '';
-        
         modal.innerHTML = `
-            <div class="weight-modal-content" style="
-                background: white;
-                padding: 2rem;
-                border-radius: 1rem;
-                box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
-                max-width: 400px;
-                width: 90%;
-                text-align: center;
-            ">
-                <div style="margin-bottom: 1.5rem;">
-                    <i class="fas fa-weight-hanging" style="font-size: 3rem; color: #1e3a8a; margin-bottom: 1rem;"></i>
-                    <h3 style="font-size: 1.5rem; font-weight: 700; color: #1f2937; margin-bottom: 0.5rem;">Welcome to KARTHAVYA!</h3>
-                    <p style="color: #6b7280;">Let's track your current weight</p>
-                </div>
-                
-                ${weightComparison}
-                
-                <div style="margin-bottom: 2rem;">
-                    <label style="display: block; font-size: 0.875rem; font-weight: 500; color: #374151; margin-bottom: 0.5rem;">Enter Your Current Weight (kg)</label>
+            <div class="weight-modal-content">
+                <h3 class="text-lg font-semibold text-gray-800 mb-4">Update Your Weight</h3>
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Current Weight (kg)</label>
                     <input type="number" 
                            value="${currentWeight}" 
                            placeholder="Enter weight in kg"
                            step="0.1"
                            min="30"
                            max="300"
-                           style="width: 100%; padding: 1rem; border: 2px solid #e5e7eb; border-radius: 0.75rem; outline: none; font-size: 1.125rem; text-align: center; font-weight: 600;"
+                           class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" 
                            id="weight-input">
                 </div>
-                
-                <button onclick="window.fitnessTracker.saveWeightAndStart()" 
-                        style="width: 100%; padding: 1rem; background: linear-gradient(135deg, #1e3a8a, #3b82f6); color: white; border: none; border-radius: 0.75rem; cursor: pointer; font-size: 1rem; font-weight: 600; box-shadow: 0 4px 12px rgba(30, 58, 138, 0.3);">
-                    <i class="fas fa-check mr-2"></i>Start My Fitness Journey
-                </button>
+                <div class="flex justify-end space-x-3">
+                    <button onclick="window.fitnessTracker.closeWeightModal()" 
+                            class="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400">
+                        Cancel
+                    </button>
+                    <button onclick="window.fitnessTracker.saveWeight()" 
+                            class="px-4 py-2 bg-blue-900 text-white rounded-lg hover:bg-blue-800">
+                        Save
+                    </button>
+                </div>
             </div>
         `;
-        
         document.body.appendChild(modal);
         
-        // Focus input
+        // Add click outside to close
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                this.closeWeightModal();
+            }
+        });
+        
+        // Focus on input with a small delay
         setTimeout(() => {
             const input = document.getElementById('weight-input');
             if (input) {
@@ -770,17 +739,13 @@ class FitnessTracker {
     }
     
     closeWeightModal() {
-        console.log('Closing weight modal');
         const modal = document.querySelector('.weight-modal');
         if (modal) {
-            console.log('Modal found, removing');
             modal.remove();
-        } else {
-            console.log('No modal found to close');
         }
     }
     
-    saveWeightAndStart() {
+    saveWeight() {
         const input = document.getElementById('weight-input');
         if (!input) {
             console.error('Weight input not found');
@@ -790,13 +755,10 @@ class FitnessTracker {
         const weight = parseFloat(input.value);
         
         if (weight && weight > 0 && weight >= 30 && weight <= 300) {
-            // Store previous weight for comparison
-            const currentWeight = this.getCurrentWeight();
-            localStorage.setItem('previousWeight', currentWeight.toString());
-            
             const weightHistory = JSON.parse(localStorage.getItem('weightHistory') || '[]');
             const today = new Date().toDateString();
             
+            // Add new weight entry
             weightHistory.push({
                 date: today,
                 weight: weight,
@@ -811,56 +773,15 @@ class FitnessTracker {
             localStorage.setItem('weightHistory', JSON.stringify(weightHistory));
             localStorage.setItem('currentWeight', weight.toString());
             
+            // Update UI
             this.updateWeightDisplay();
-            this.closeWeightModal();
-            
-            // Show success message
-            this.showWeightUpdateSuccess(weight);
+            alert('Weight updated successfully!');
         } else {
             alert('Please enter a valid weight between 30 and 300 kg');
             return;
         }
-    }
-
-    showWeightUpdateSuccess(weight) {
-        const successModal = document.createElement('div');
-        successModal.style.cssText = `
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background: linear-gradient(135deg, #10b981, #059669);
-            color: white;
-            padding: 1rem 1.5rem;
-            border-radius: 0.75rem;
-            box-shadow: 0 10px 25px rgba(16, 185, 129, 0.3);
-            z-index: 10000;
-            transform: translateX(100%);
-            transition: transform 0.3s ease;
-        `;
         
-        successModal.innerHTML = `
-            <div style="display: flex; align-items: center;">
-                <i class="fas fa-check-circle" style="margin-right: 0.5rem; font-size: 1.25rem;"></i>
-                <span style="font-weight: 600;">Weight updated to ${weight}kg!</span>
-            </div>
-        `;
-        
-        document.body.appendChild(successModal);
-        
-        // Animate in
-        setTimeout(() => {
-            successModal.style.transform = 'translateX(0)';
-        }, 100);
-        
-        // Remove after 3 seconds
-        setTimeout(() => {
-            successModal.style.transform = 'translateX(100%)';
-            setTimeout(() => {
-                if (successModal.parentNode) {
-                    successModal.remove();
-                }
-            }, 300);
-        }, 3000);
+        this.closeWeightModal();
     }
     
     getCurrentWeight() {
@@ -1028,6 +949,182 @@ class FitnessTracker {
         }, 1000);
     }
     
+    checkWeightOnLoad() {
+        // Wait for splash screen to finish
+        setTimeout(() => {
+            this.showWeightInputModal();
+        }, 3500);
+    }
+
+    showWeightInputModal() {
+        console.log('Showing weight input modal on load');
+        
+        const currentWeight = this.getCurrentWeight();
+        const previousWeight = localStorage.getItem('previousWeight') || currentWeight;
+        
+        // Create modal with explicit styling
+        const modal = document.createElement('div');
+        modal.className = 'weight-modal';
+        modal.style.cssText = `
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        `;
+        
+        const weightComparison = currentWeight !== previousWeight ? 
+            `<p style="font-size: 0.875rem; color: #6b7280; margin-bottom: 1rem;">
+                Previous: ${previousWeight}kg → Current: ${currentWeight}kg
+                <span style="color: ${currentWeight > previousWeight ? '#ef4444' : '#10b981'};">
+                    (${currentWeight > previousWeight ? '+' : ''}${(currentWeight - previousWeight).toFixed(1)}kg)
+                </span>
+            </p>` : '';
+        
+        modal.innerHTML = `
+            <div class="weight-modal-content" style="
+                background: white;
+                padding: 2rem;
+                border-radius: 1rem;
+                box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+                max-width: 400px;
+                width: 90%;
+                text-align: center;
+            ">
+                <div style="margin-bottom: 1.5rem;">
+                    <i class="fas fa-weight-hanging" style="font-size: 3rem; color: #1e3a8a; margin-bottom: 1rem;"></i>
+                    <h3 style="font-size: 1.5rem; font-weight: 700; color: #1f2937; margin-bottom: 0.5rem;">Welcome to KARTHAVYA!</h3>
+                    <p style="color: #6b7280;">Let's track your current weight</p>
+                </div>
+                
+                ${weightComparison}
+                
+                <div style="margin-bottom: 2rem;">
+                    <label style="display: block; font-size: 0.875rem; font-weight: 500; color: #374151; margin-bottom: 0.5rem;">Enter Your Current Weight (kg)</label>
+                    <input type="number" 
+                           value="${currentWeight}" 
+                           placeholder="Enter weight in kg"
+                           step="0.1"
+                           min="30"
+                           max="300"
+                           style="width: 100%; padding: 1rem; border: 2px solid #e5e7eb; border-radius: 0.75rem; outline: none; font-size: 1.125rem; text-align: center; font-weight: 600;"
+                           id="weight-input">
+                </div>
+                
+                <button onclick="window.fitnessTracker.saveWeightAndStart()" 
+                        style="width: 100%; padding: 1rem; background: linear-gradient(135deg, #1e3a8a, #3b82f6); color: white; border: none; border-radius: 0.75rem; cursor: pointer; font-size: 1rem; font-weight: 600; box-shadow: 0 4px 12px rgba(30, 58, 138, 0.3);">
+                    <i class="fas fa-check mr-2"></i>Start My Fitness Journey
+                </button>
+            </div>
+        `;
+        
+        document.body.appendChild(modal);
+        
+        // Focus input
+        setTimeout(() => {
+            const input = document.getElementById('weight-input');
+            if (input) {
+                input.focus();
+                input.select();
+            }
+        }, 100);
+    }
+
+    saveWeightAndStart() {
+        const input = document.getElementById('weight-input');
+        if (!input) {
+            console.error('Weight input not found');
+            return;
+        }
+        
+        const weight = parseFloat(input.value);
+        
+        if (weight && weight > 0 && weight >= 30 && weight <= 300) {
+            // Store previous weight for comparison
+            const currentWeight = this.getCurrentWeight();
+            localStorage.setItem('previousWeight', currentWeight.toString());
+            
+            const weightHistory = JSON.parse(localStorage.getItem('weightHistory') || '[]');
+            const today = new Date().toDateString();
+            
+            weightHistory.push({
+                date: today,
+                weight: weight,
+                timestamp: Date.now()
+            });
+            
+            // Keep only last 30 entries
+            if (weightHistory.length > 30) {
+                weightHistory.shift();
+            }
+            
+            localStorage.setItem('weightHistory', JSON.stringify(weightHistory));
+            localStorage.setItem('currentWeight', weight.toString());
+            
+            this.updateWeightDisplay();
+            this.closeWeightModal();
+            
+            // Show success message
+            this.showWeightUpdateSuccess(weight);
+        } else {
+            alert('Please enter a valid weight between 30 and 300 kg');
+            return;
+        }
+    }
+
+    showWeightUpdateSuccess(weight) {
+        const successModal = document.createElement('div');
+        successModal.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: 0.75rem;
+            box-shadow: 0 10px 25px rgba(16, 185, 129, 0.3);
+            z-index: 10000;
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+        `;
+        
+        successModal.innerHTML = `
+            <div style="display: flex; align-items: center;">
+                <i class="fas fa-check-circle" style="margin-right: 0.5rem; font-size: 1.25rem;"></i>
+                <span style="font-weight: 600;">Weight updated to ${weight}kg!</span>
+            </div>
+        `;
+        
+        document.body.appendChild(successModal);
+        
+        // Animate in
+        setTimeout(() => {
+            successModal.style.transform = 'translateX(0)';
+        }, 100);
+        
+        // Remove after 3 seconds
+        setTimeout(() => {
+            successModal.style.transform = 'translateX(100%)';
+            setTimeout(() => {
+                if (successModal.parentNode) {
+                    successModal.remove();
+                }
+            }, 300);
+        }, 3000);
+    }
+
+    closeWeightModal() {
+        const modal = document.querySelector('.weight-modal');
+        if (modal) {
+            modal.remove();
+        }
+    }
+
     toggleMobileMenu() {
         const sidebar = document.getElementById('mobile-sidebar');
         const overlay = document.getElementById('mobile-menu-overlay');
@@ -1043,7 +1140,6 @@ class FitnessTracker {
                 // Open menu
                 sidebar.classList.remove('-translate-x-full');
                 overlay.classList.remove('hidden');
-                this.populateNavigation();
             }
         }
     }
@@ -1080,7 +1176,7 @@ class FitnessTracker {
             });
         });
     }
-    
+
     showSplashScreen() {
         // Hide splash screen after 3 seconds
         setTimeout(() => {
@@ -1106,4 +1202,3 @@ document.addEventListener('DOMContentLoaded', () => {
         console.error('Error initializing fitness tracker:', error);
     }
 });
-
